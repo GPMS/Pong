@@ -1,12 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "pallet.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
 struct Window;
 struct Input;
-struct Timer;
 
 enum GameState {
     GAME
@@ -24,11 +25,20 @@ typedef struct Game {
 
     // Subsystems
     struct Input*   input;
-    struct Timer*   timerList;
 
     // Font files
-    TTF_Font*       fonts[2];
+    TTF_Font*       font;
     int             numFonts;
+
+    int             fieldTop;
+    int             fieldBottom;
+    int             fieldRight;
+    int             fieldLeft;
+
+    int             totalSets;
+    int             currentSet;
+
+    Pallet          palletA, palletB;
 } Game;
 
 // Sets up SDL and creates a window and a renderer, filling up

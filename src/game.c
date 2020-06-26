@@ -1,7 +1,6 @@
 #include "game.h"
 #include "Engine/window.h"
 #include "Engine/input.h"
-#include "Engine/timer.h"
 #include "Engine/vector.h"
 #include "render.h"
 #include <stdio.h>
@@ -45,8 +44,7 @@ TTF_Font* LoadFont(const char* file,
 void LoadResources(Game* game)
 {
     game->numFonts = 2;
-    game->fonts[0] = LoadFont("resources/font.ttf", 15);
-    game->fonts[1] = LoadFont("resources/font.ttf", 30);
+    game->font = LoadFont("resources/font.ttf", 30);
 }
 
 void Game_Init(Game* game)
@@ -56,6 +54,16 @@ void Game_Init(Game* game)
     game->window = Window_Create("Engine", 720, 480, 0);
 
     game->input = Input_Create();
+
+    game->totalSets = 6;
+    game->currentSet = 1;
+
+    game->fieldTop = 50;
+    game->fieldBottom = game->window->height - 50;
+    game->fieldLeft = 20;
+    game->fieldRight = game->window->width - 20;
+
+    Pallet_Init(game);
 
     game->state = GAME;
     game->isRunning = SDL_TRUE;
@@ -67,10 +75,7 @@ void Game_Quit(Game* game)
 {
     Input_Destroy(game->input);
 
-    Timer_EmptyList(game->timerList);
-
-    for (int i = 0; i < game->numFonts; i++)
-        TTF_CloseFont(game->fonts[i]);
+    TTF_CloseFont(game->font);
     TTF_Quit();
 
     Window_Destroy(game->window);
@@ -110,28 +115,20 @@ void CalculateFPS(Game* game, const unsigned int targetFPS)
 
 }
 
-void CallF(Game* game)
-{
-    printf("timer finished\n");
-}
-
 // Deals with SDL events
 void ProcessInput(Game* game)
 {
     Input* input = game->input;
 
     game->isRunning = Input_Get(input);
-
-    if (Input_KeyWasReleased(input, SDLK_ESCAPE))
-        game->isRunning = SDL_FALSE;
-
-    if (Input_ButtonIsDoubleClicked(input, SDL_BUTTON_LEFT))
-        game->timerList = Timer_Add(game->timerList, 5 * 1000, SDL_TRUE, CallF);
 }
 
 void Update(Game* game)
 {
+    if (Input_KeyWasReleased(game->input, SDLK_ESCAPE))
+        game->isRunning = SDL_FALSE;
 
+    Pallet_Update(game);
 }
 
 void Game_Loop(Game* game)
@@ -139,9 +136,6 @@ void Game_Loop(Game* game)
     while (game->isRunning)
     {
         CalculateFPS(game, 60);
-        printf("\ndt: %f", game->dt);
-
-        Timer_Tick(game);
 
         ProcessInput(game);
         Update(game);

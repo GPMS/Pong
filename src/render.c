@@ -80,26 +80,49 @@ void DrawFillCircle(SDL_Renderer* renderer, const SDL_Color* color,
                           Vector2_Add(center, Vector2((float)x, (float)y)));
 }
 
+void DrawPlayField(Game* game)
+{
+    SDL_Renderer* renderer = game->window->SDLRenderer;
+
+    Render_SetDrawColor(renderer, &black);
+    SDL_RenderClear(renderer);
+
+    char tmpString[30];
+
+    sprintf(tmpString, "%d", game->palletA.score);
+    DrawText(game, &white,
+             Vector2(0.0f, 0.0f),
+             tmpString,
+             game->font);
+
+    sprintf(tmpString, "%d", game->palletB.score);
+    DrawText(game, &white,
+             Vector2(game->window->width-30, 0.0f),
+             tmpString,
+             game->font);
+
+    sprintf(tmpString, "%d/%d", game->currentSet, game->totalSets);
+    DrawText(game, &white,
+             Vector2(CENTERED, 0.0f),
+             tmpString,
+             game->font);
+
+    Render_SetDrawColor(renderer, &grey);
+    SDL_Rect playField;
+    playField.x = game->fieldLeft;
+    playField.y = game->fieldTop;
+    playField.w = game->fieldRight - game->fieldLeft;
+    playField.h = game->fieldBottom - game->fieldTop;
+    SDL_RenderFillRect(renderer, &playField);
+}
+
 void Render(Game* game)
 {
     SDL_Renderer* renderer = game->window->SDLRenderer;
 
-    Render_SetDrawColor(renderer, &white);
-    SDL_RenderClear(renderer);
-
-    char tmpString[30];
-    sprintf(tmpString, "FPS: %.2f (%.3f s)", game->fps, game->dt);
-    DrawText(game, &black,
-             Vector2(0.0f, 0.0f),
-             tmpString,
-             game->fonts[0]);
-
-    DrawText(game, &red,
-             Vector2(CENTERED, CENTERED),
-             "Hello, world",
-             game->fonts[1]);
-
-    DrawFillCircle(renderer, &black, Vector2(100.0f, 100.0f), 1.0f);
+    DrawPlayField(game);
+    Pallet_Draw(renderer, &game->palletA);
+    Pallet_Draw(renderer, &game->palletB);
 
     SDL_RenderPresent(renderer);
 }
