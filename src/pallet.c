@@ -11,6 +11,8 @@ const int PALLET_HEIGHT = 60;
 
 void Pallet_Init(Game* game)
 {
+    // Distance from the borders of the
+    // playing field
     int palletDistance = 50;
 
     Pallet* a = &game->palletA;
@@ -19,44 +21,46 @@ void Pallet_Init(Game* game)
     a->position.x = game->fieldRight - palletDistance - PALLET_WIDTH;
     b->position.x = game->fieldLeft + palletDistance;
 
-    a->position.y = game->fieldTop +
-                     (game->fieldBottom - game->fieldTop)/2.0f
-                     - PALLET_HEIGHT/2.0f;
+    a->position.y = game->fieldMiddle.y - PALLET_HEIGHT/2.0f;
     b->position.y = a->position.y;
 
     a->orientation = Vector2(-1.0f, 0.0f);
     b->orientation = Vector2(1.0f, 0.0f);
 
-    a->speed = 0.0f;
-    b->speed = 0.0f;
+    a->speed = b->speed = 0.0f;
 
-    a->score = 0;
-    b->score = 0;
+    a->score = b->score = 0;
 }
 
-void Move(Game* game, Pallet* pallet)
+// Keeps a pallet from going out of the playing field
+void LimitMovement(Game* game, Pallet* pallet)
 {
-    Vec2 velocity = Vector2(0.0f, pallet->speed);
-    velocity = Vector2_Mul(velocity, game->dt);
-    pallet->position = Vector2_Add(pallet->position, velocity);
-
-    // Lose velocity due to friction (smooth movement)
-    pallet->speed *= 0.9f;
-
-    // Don't go out of the play field
     if (pallet->position.y < game->fieldTop)
         pallet->position.y = game->fieldTop;
     if (pallet->position.y + PALLET_HEIGHT > game->fieldBottom)
         pallet->position.y = game->fieldBottom - PALLET_HEIGHT;
 }
 
-void Pallet_Update(Game* game)
+// Kinematics!
+void Move(Game* game, Pallet* pallet)
+{
+    Vec2 velocity = Vector2(0.0f, pallet->speed);
+    velocity = Vector2_Mul(velocity, game->dt);
+
+    pallet->position = Vector2_Add(pallet->position, velocity);
+
+    // Lose velocity due to friction (smooth movement)
+    pallet->speed *= 0.9f;
+}
+
+// Deals with input to the pallets
+void HandleInput(Game* game)
 {
     Input* input = game->input;
     Pallet* a = &game->palletA;
     Pallet* b = &game->palletB;
 
-    const float PALLET_SPEED = 500.0f;
+    const float PALLET_SPEED = 400.0f;
 
     if (Input_KeyWasPressed(input, SDLK_UP) ||
         Input_KeyIsBeingHeld(input, SDLK_UP))
@@ -79,20 +83,24 @@ void Pallet_Update(Game* game)
     {
         b->speed = PALLET_SPEED;
     }
+}
 
-    // Move
+void Pallet_Update(Game* game)
+{
+    Pallet* a = &game->palletA;
+    Pallet* b = &game->palletB;
+
+    HandleInput(game);
+
     Move(game, a);
     Move(game, b);
+
+    LimitMovement(game, a);
+    LimitMovement(game, b);
 }
 
 void Pallet_Draw(SDL_Renderer* renderer, Pallet* pallet)
 {
-    SDL_Rect rect;
-    rect.x = (int)pallet->position.x;
-    rect.y = (int)pallet->position.y;
-    rect.w = PALLET_WIDTH;
-    rect.h = PALLET_HEIGHT;
-
-    Render_SetDrawColor(renderer, &white);
-    SDL_RenderFillRect(renderer, &rect);
+    DrawFillRect(renderer, &white,
+                 pallet->position, PALLET_WIDTH, PALLET_HEIGHT);
 }

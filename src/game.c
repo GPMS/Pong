@@ -49,8 +49,24 @@ void LoadResources(Game* game)
     game->font = LoadFont("resources/font.ttf", 30);
 }
 
+// Resets the game parameters
+// allowing replay
+void Reset(Game* game)
+{
+    game->totalSets = 5;
+    game->currentSet = 1;
+
+    Pallet_Init(game);
+    game->ball.pastPositions = NULL;
+    Ball_Reset(game, 1);
+
+    game->state = GAME;
+}
+
 void Game_Init(Game* game)
 {
+    game->isRunning = SDL_TRUE;
+
     InitSDL();
 
     time_t t;
@@ -60,20 +76,17 @@ void Game_Init(Game* game)
 
     game->input = Input_Create();
 
-    game->totalSets = 5;
-    game->currentSet = 1;
-
     game->fieldTop = 50;
     game->fieldBottom = game->window->height - 50;
     game->fieldLeft = 20;
     game->fieldRight = game->window->width - 20;
 
-    Pallet_Init(game);
-    game->ball.pastPositions = NULL;
-    Ball_Reset(game, 1);
+    game->fieldMiddle.x = game->fieldLeft +
+                          (game->fieldRight - game->fieldLeft)/2.0f;
+    game->fieldMiddle.y = game->fieldTop +
+                          (game->fieldBottom - game->fieldTop)/2.0f;
 
-    game->state = GAME;
-    game->isRunning = SDL_TRUE;
+    Reset(game);
 
     LoadResources(game);
 }
@@ -147,7 +160,7 @@ void Update(Game* game)
             break;
         case END:
             if (Input_KeyWasReleased(input, SDLK_y))
-                game->state = END;
+                Reset(game);
             else if (Input_KeyWasReleased(input, SDLK_n))
                 game->isRunning = SDL_FALSE;
             break;

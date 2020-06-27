@@ -12,7 +12,7 @@ typedef struct PosList {
     struct PosList* next;
 } PosList;
 
-typedef struct {
+typedef struct Ball {
     Vec2 position;
 
     PosList* pastPositions;
@@ -22,6 +22,12 @@ typedef struct {
     float speed;
 } Ball;
 
+
+// Resets ball parameters to default
 void Ball_Reset(struct Game* game, int turn);
+
+// Updates the ball position, checking for collision
 void Ball_Update(struct Game* game);
+
+// Draws the ball alongside its trail
 void Ball_Draw(SDL_Renderer* renderer, Ball* ball);

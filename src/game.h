@@ -32,17 +32,23 @@ typedef struct Game {
     TTF_Font*       font;
     int             numFonts;
 
+    // Boundaries of the playing field
     int             fieldTop;
     int             fieldBottom;
     int             fieldRight;
     int             fieldLeft;
+    Vec2            fieldMiddle; // Middle point of the playing field
 
+    // Sets
     int             totalSets;
     int             currentSet;
 
-    Pallet          palletA, palletB;
+    // Actors
+    Pallet          palletA;    // Right Pallet
+    Pallet          palletB;    // Left Pallet
     Ball            ball;
 } Game;
+
 
 // Sets up SDL and creates a window and a renderer, filling up
 void Game_Init(Game* game);

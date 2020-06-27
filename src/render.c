@@ -80,6 +80,19 @@ void DrawFillCircle(SDL_Renderer* renderer, const SDL_Color* color,
                           Vector2_Add(center, Vector2((float)x, (float)y)));
 }
 
+void DrawFillRect(SDL_Renderer* renderer, const SDL_Color* color,
+                  Vec2 position, int width, int height)
+{
+    SDL_Rect rect;
+    rect.x = (int)position.x;
+    rect.y = (int)position.y;
+    rect.w = width;
+    rect.h = height;
+
+    Render_SetDrawColor(renderer, color);
+    SDL_RenderFillRect(renderer, &rect);
+}
+
 void DrawPlayField(Game* game)
 {
     SDL_Renderer* renderer = game->window->SDLRenderer;
@@ -91,13 +104,13 @@ void DrawPlayField(Game* game)
 
     sprintf(tmpString, "%d", game->palletB.score);
     DrawText(game, &white,
-             Vector2(0.0f, 0.0f),
+             Vector2(game->fieldLeft, 0.0f),
              tmpString,
              game->font);
 
     sprintf(tmpString, "%d", game->palletA.score);
     DrawText(game, &white,
-             Vector2(game->window->width-30, 0.0f),
+             Vector2(game->fieldRight-40, 0.0f),
              tmpString,
              game->font);
 
