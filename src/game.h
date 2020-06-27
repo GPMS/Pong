@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "pallet.h"
+#include "ball.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -10,7 +11,8 @@ struct Window;
 struct Input;
 
 enum GameState {
-    GAME
+    GAME,
+    END
 };
 
 // Contains data necessary to run the game
@@ -39,6 +41,7 @@ typedef struct Game {
     int             currentSet;
 
     Pallet          palletA, palletB;
+    Ball            ball;
 } Game;
 
 // Sets up SDL and creates a window and a renderer, filling up

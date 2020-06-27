@@ -4,6 +4,8 @@
 #include "Engine/vector.h"
 #include "render.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 
 void InitSDL()
@@ -51,11 +53,14 @@ void Game_Init(Game* game)
 {
     InitSDL();
 
+    time_t t;
+    srand((unsigned) time(&t));
+
     game->window = Window_Create("Engine", 720, 480, 0);
 
     game->input = Input_Create();
 
-    game->totalSets = 6;
+    game->totalSets = 5;
     game->currentSet = 1;
 
     game->fieldTop = 50;
@@ -64,6 +69,8 @@ void Game_Init(Game* game)
     game->fieldRight = game->window->width - 20;
 
     Pallet_Init(game);
+    game->ball.pastPositions = NULL;
+    Ball_Reset(game, 1);
 
     game->state = GAME;
     game->isRunning = SDL_TRUE;
@@ -111,6 +118,8 @@ void CalculateFPS(Game* game, const unsigned int targetFPS)
 
     }
     game->dt = dt / 1000.0f;
+    if (game->dt > 0.5f)
+        game->dt = 0.016f;
     game->fps = fps;
 
 }
@@ -125,10 +134,24 @@ void ProcessInput(Game* game)
 
 void Update(Game* game)
 {
-    if (Input_KeyWasReleased(game->input, SDLK_ESCAPE))
+    Input* input = game->input;
+
+    if (Input_KeyWasReleased(input, SDLK_ESCAPE))
         game->isRunning = SDL_FALSE;
 
-    Pallet_Update(game);
+    switch (game->state)
+    {
+        case GAME:
+            Pallet_Update(game);
+            Ball_Update(game);
+            break;
+        case END:
+            if (Input_KeyWasReleased(input, SDLK_y))
+                game->state = END;
+            else if (Input_KeyWasReleased(input, SDLK_n))
+                game->isRunning = SDL_FALSE;
+            break;
+    }
 }
 
 void Game_Loop(Game* game)

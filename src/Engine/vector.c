@@ -84,11 +84,14 @@ Vec2 Vector2_Rotate(Vec2 v, float radians)
 {
     Vec2 new;
 
+    // anti-clockwise
+    radians = 0-radians;
+
     float cosine = (float) cos(radians);
     float sine = (float) sin(radians);
 
     new.x = v.x * cosine - v.y * sine;
-    new.x = v.x * sine + v.y * cosine;
+    new.y = v.x * sine + v.y * cosine;
 
     return new;
 }

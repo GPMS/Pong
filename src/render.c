@@ -89,13 +89,13 @@ void DrawPlayField(Game* game)
 
     char tmpString[30];
 
-    sprintf(tmpString, "%d", game->palletA.score);
+    sprintf(tmpString, "%d", game->palletB.score);
     DrawText(game, &white,
              Vector2(0.0f, 0.0f),
              tmpString,
              game->font);
 
-    sprintf(tmpString, "%d", game->palletB.score);
+    sprintf(tmpString, "%d", game->palletA.score);
     DrawText(game, &white,
              Vector2(game->window->width-30, 0.0f),
              tmpString,
@@ -116,13 +116,51 @@ void DrawPlayField(Game* game)
     SDL_RenderFillRect(renderer, &playField);
 }
 
+void DrawEnd(Game* game)
+{
+    SDL_Renderer* renderer = game->window->SDLRenderer;
+    Pallet* a = &game->palletA;
+    Pallet* b = &game->palletB;
+
+    Render_SetDrawColor(renderer, &black);
+    SDL_RenderClear(renderer);
+
+    char tmpString[30];
+
+    int center = game->window->height / 2.0f;
+
+    sprintf(tmpString, "Player %c won!", a->score > b->score ? 'A' : 'B');
+    DrawText(game, &white,
+             Vector2(CENTERED, center - 40),
+             tmpString,
+             game->font);
+    sprintf(tmpString, "Will you play again?");
+    DrawText(game, &white,
+             Vector2(CENTERED, center),
+             tmpString,
+             game->font);
+    sprintf(tmpString, "(Y/N)");
+    DrawText(game, &white,
+             Vector2(CENTERED, center + 40),
+             tmpString,
+             game->font);
+}
+
 void Render(Game* game)
 {
     SDL_Renderer* renderer = game->window->SDLRenderer;
 
-    DrawPlayField(game);
-    Pallet_Draw(renderer, &game->palletA);
-    Pallet_Draw(renderer, &game->palletB);
+    switch(game->state)
+    {
+        case GAME:
+            DrawPlayField(game);
+            Pallet_Draw(renderer, &game->palletA);
+            Pallet_Draw(renderer, &game->palletB);
+            Ball_Draw(renderer, &game->ball);
+            break;
+        case END:
+            DrawEnd(game);
+    }
 
     SDL_RenderPresent(renderer);
 }

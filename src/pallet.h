@@ -10,6 +10,7 @@ struct Game;
 
 typedef struct {
     Vec2 position;
+    Vec2 orientation;
     float speed;
     int score;
 } Pallet;

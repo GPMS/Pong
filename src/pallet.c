@@ -2,34 +2,42 @@
 #include "render.h"
 #include "Engine/pallete.h"
 #include "Engine/input.h"
+#include "Engine/vector.h"
 
 
 const int PALLET_WIDTH = 5;
-const int PALLET_HEIGHT = 40;
+const int PALLET_HEIGHT = 60;
 
 
 void Pallet_Init(Game* game)
 {
     int palletDistance = 50;
 
-    game->palletA.position.x = game->fieldRight - palletDistance - PALLET_WIDTH;
-    game->palletB.position.x = game->fieldLeft + palletDistance;
+    Pallet* a = &game->palletA;
+    Pallet* b = &game->palletB;
 
-    game->palletA.position.y = game->fieldTop +
-                               (game->fieldBottom - game->fieldTop)/2.0f
-                                - PALLET_HEIGHT/2.0f;
-    game->palletB.position.y = game->palletA.position.y;
+    a->position.x = game->fieldRight - palletDistance - PALLET_WIDTH;
+    b->position.x = game->fieldLeft + palletDistance;
 
-    game->palletA.speed = 0.0f;
-    game->palletB.speed = 0.0f;
+    a->position.y = game->fieldTop +
+                     (game->fieldBottom - game->fieldTop)/2.0f
+                     - PALLET_HEIGHT/2.0f;
+    b->position.y = a->position.y;
 
-    game->palletA.score = 0;
-    game->palletB.score = 0;
+    a->orientation = Vector2(-1.0f, 0.0f);
+    b->orientation = Vector2(1.0f, 0.0f);
+
+    a->speed = 0.0f;
+    b->speed = 0.0f;
+
+    a->score = 0;
+    b->score = 0;
 }
 
 void Move(Game* game, Pallet* pallet)
 {
     Vec2 velocity = Vector2(0.0f, pallet->speed);
+    velocity = Vector2_Mul(velocity, game->dt);
     pallet->position = Vector2_Add(pallet->position, velocity);
 
     // Lose velocity due to friction (smooth movement)
@@ -48,7 +56,7 @@ void Pallet_Update(Game* game)
     Pallet* a = &game->palletA;
     Pallet* b = &game->palletB;
 
-    const float PALLET_SPEED = 8.0f;
+    const float PALLET_SPEED = 500.0f;
 
     if (Input_KeyWasPressed(input, SDLK_UP) ||
         Input_KeyIsBeingHeld(input, SDLK_UP))
