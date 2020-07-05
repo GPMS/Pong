@@ -259,3 +259,4 @@ void Ball_Draw(SDL_Renderer* renderer, Ball* ball)
                  ball->position, BALL_SIZE, BALL_SIZE);
     DrawTrail(renderer, &white, ball->pastPositions, 0);
 }
+

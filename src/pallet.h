@@ -24,3 +24,4 @@ void Pallet_Update(struct Game* game);
 
 // Draws one pallet
 void Pallet_Draw(SDL_Renderer* renderer, Pallet* pallet);
+

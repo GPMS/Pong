@@ -44,13 +44,8 @@ void LimitMovement(Game* game, Pallet* pallet)
 // Kinematics!
 void Move(Game* game, Pallet* pallet)
 {
-    Vec2 velocity = Vector2(0.0f, pallet->speed);
-    velocity = Vector2_Mul(velocity, game->dt);
-
+    Vec2 velocity = Vector2(0.0f, pallet->speed * game->dt);
     pallet->position = Vector2_Add(pallet->position, velocity);
-
-    // Lose velocity due to friction (smooth movement)
-    pallet->speed *= 0.9f;
 }
 
 // Deals with input to the pallets
@@ -72,6 +67,11 @@ void HandleInput(Game* game)
     {
         a->speed = PALLET_SPEED;
     }
+    if (Input_KeyWasReleased(input, SDLK_UP) ||
+        Input_KeyWasReleased(input, SDLK_DOWN))
+    {
+        a->speed = 0;
+    }
 
     if (Input_KeyWasPressed(input, SDLK_a) ||
         Input_KeyIsBeingHeld(input, SDLK_a))
@@ -82,6 +82,11 @@ void HandleInput(Game* game)
              Input_KeyIsBeingHeld(input, SDLK_z))
     {
         b->speed = PALLET_SPEED;
+    }
+    if (Input_KeyWasReleased(input, SDLK_a) ||
+        Input_KeyWasReleased(input, SDLK_z))
+    {
+        b->speed = 0;
     }
 }
 
