@@ -53,6 +53,7 @@ void DrawText(const Game* game,
         position.y = (window->height - height)/2.0f;
 
     CopyTexture(renderer, label, position, width, height);
+    SDL_DestroyTexture(label);
 }
 
 void DrawPoint(SDL_Renderer* renderer, const SDL_Color* color,
