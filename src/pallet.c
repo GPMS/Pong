@@ -1,13 +1,11 @@
+#include "Engine/input.h"
+#include "Engine/pallete.h"
+#include "Engine/vector.h"
 #include "game.h"
 #include "render.h"
-#include "Engine/pallete.h"
-#include "Engine/input.h"
-#include "Engine/vector.h"
 
-
-const int PALLET_WIDTH = 5;
+const int PALLET_WIDTH  = 5;
 const int PALLET_HEIGHT = 60;
-
 
 void Pallet_Init(Game* game)
 {
@@ -21,7 +19,7 @@ void Pallet_Init(Game* game)
     a->position.x = game->fieldRight - palletDistance - PALLET_WIDTH;
     b->position.x = game->fieldLeft + palletDistance;
 
-    a->position.y = game->fieldMiddle.y - PALLET_HEIGHT/2.0f;
+    a->position.y = game->fieldMiddle.y - PALLET_HEIGHT / 2.0f;
     b->position.y = a->position.y;
 
     a->orientation = Vector2(-1.0f, 0.0f);
@@ -44,48 +42,34 @@ void LimitMovement(Game* game, Pallet* pallet)
 // Kinematics!
 void Move(Game* game, Pallet* pallet)
 {
-    Vec2 velocity = Vector2(0.0f, pallet->speed * game->dt);
+    Vec2 velocity    = Vector2(0.0f, pallet->speed * game->dt);
     pallet->position = Vector2_Add(pallet->position, velocity);
 }
 
 // Deals with input to the pallets
 void HandleInput(Game* game)
 {
-    Input* input = game->input;
-    Pallet* a = &game->palletA;
-    Pallet* b = &game->palletB;
+    Input*  input = game->input;
+    Pallet* a     = &game->palletA;
+    Pallet* b     = &game->palletB;
 
     const float PALLET_SPEED = 400.0f;
 
-    if (Input_KeyWasPressed(input, SDLK_UP) ||
-        Input_KeyIsBeingHeld(input, SDLK_UP))
-    {
+    if (Input_KeyWasPressed(input, SDLK_UP) || Input_KeyIsBeingHeld(input, SDLK_UP)) {
         a->speed = -PALLET_SPEED;
-    }
-    else if (Input_KeyWasPressed(input, SDLK_DOWN) ||
-             Input_KeyIsBeingHeld(input, SDLK_DOWN))
-    {
+    } else if (Input_KeyWasPressed(input, SDLK_DOWN) || Input_KeyIsBeingHeld(input, SDLK_DOWN)) {
         a->speed = PALLET_SPEED;
     }
-    if (Input_KeyWasReleased(input, SDLK_UP) ||
-        Input_KeyWasReleased(input, SDLK_DOWN))
-    {
+    if (Input_KeyWasReleased(input, SDLK_UP) || Input_KeyWasReleased(input, SDLK_DOWN)) {
         a->speed = 0;
     }
 
-    if (Input_KeyWasPressed(input, SDLK_a) ||
-        Input_KeyIsBeingHeld(input, SDLK_a))
-    {
+    if (Input_KeyWasPressed(input, SDLK_a) || Input_KeyIsBeingHeld(input, SDLK_a)) {
         b->speed = -PALLET_SPEED;
-    }
-    else if (Input_KeyWasPressed(input, SDLK_z) ||
-             Input_KeyIsBeingHeld(input, SDLK_z))
-    {
+    } else if (Input_KeyWasPressed(input, SDLK_z) || Input_KeyIsBeingHeld(input, SDLK_z)) {
         b->speed = PALLET_SPEED;
     }
-    if (Input_KeyWasReleased(input, SDLK_a) ||
-        Input_KeyWasReleased(input, SDLK_z))
-    {
+    if (Input_KeyWasReleased(input, SDLK_a) || Input_KeyWasReleased(input, SDLK_z)) {
         b->speed = 0;
     }
 }
@@ -106,6 +90,5 @@ void Pallet_Update(Game* game)
 
 void Pallet_Draw(SDL_Renderer* renderer, Pallet* pallet)
 {
-    DrawFillRect(renderer, &white,
-                 pallet->position, PALLET_WIDTH, PALLET_HEIGHT);
+    DrawFillRect(renderer, &white, pallet->position, PALLET_WIDTH, PALLET_HEIGHT);
 }

@@ -1,9 +1,7 @@
 #include "game.h"
 
-#include <stdlib.h>
 #include <stdio.h>
-
-
+#include <stdlib.h>
 
 // Entry point for the program
 int main(int argc, char* argv[])

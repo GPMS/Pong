@@ -8,7 +8,7 @@ extern const int BALL_SIZE;
 struct Game;
 
 typedef struct PosList {
-    Vec2 position;
+    Vec2            position;
     struct PosList* next;
 } PosList;
 
@@ -16,12 +16,11 @@ typedef struct Ball {
     Vec2 position;
 
     PosList* pastPositions;
-    int listSize;
+    int      listSize;
 
-    Vec2 direction;
+    Vec2  direction;
     float speed;
 } Ball;
-
 
 // Resets ball parameters to default
 void Ball_Reset(struct Game* game, int turn);
