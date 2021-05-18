@@ -1,5 +1,4 @@
-#ifndef RENDER_H
-#define RENDER_H
+#pragma once
 
 #include <SDL2/SDL.h>
 
@@ -15,5 +14,3 @@ void DrawFillRect(SDL_Renderer* renderer, const SDL_Color* color, Vec2 position,
 
 // Draws the game
 void Render(struct Game* game);
-
-#endif

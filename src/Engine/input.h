@@ -1,5 +1,4 @@
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
 
 #include <SDL2/SDL.h>
 
@@ -59,5 +58,3 @@ SDL_bool Input_KeyIsBeingHeld(const Input* input, const SDL_Keycode key);
 
 // Check if a particular key has just been released
 SDL_bool Input_KeyWasReleased(const Input* input, const SDL_Keycode key);
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -18,4 +17,3 @@ typedef struct Window {
 Window* Window_Create(const char* title, const unsigned int width, const unsigned int height, enum WindowFlags currentFlags);
 
 void Window_Destroy(Window* window);
-#endif

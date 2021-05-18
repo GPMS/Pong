@@ -1,5 +1,4 @@
-#ifndef PALLETE_H
-#define PALLETE_H
+#pragma once
 
 #include <SDL2/SDL.h>
 
@@ -10,5 +9,3 @@ static const SDL_Color black = {0, 0, 0, 255};
 static const SDL_Color red   = {255, 0, 0, 255};
 static const SDL_Color green = {0, 255, 0, 255};
 static const SDL_Color blue  = {0, 0, 255, 255};
-
-#endif

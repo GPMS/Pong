@@ -1,5 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include "ball.h"
 #include "pallet.h"
@@ -55,5 +54,3 @@ void Game_Quit(Game* game);
 
 // Game loop...
 void Game_Loop(Game* game);
-
-#endif
