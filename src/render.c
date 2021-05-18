@@ -4,7 +4,6 @@
 
 #include "game.h"
 
-#include <SDL2/SDL_render.h>
 #include <string.h>
 
 // Set draw color
