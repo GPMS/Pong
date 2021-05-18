@@ -10,7 +10,7 @@ const int   INITIAL_MAX_SIZE = 30.0f;   // Initial max size of the trail
 int         MAX_SIZE;                   // Current max size of the trail
 
 // Returns 1 if colliding, 0 otherwise
-int PointRectCollision(Vec2 point, Pallet* pallet)
+static int PointRectCollision(Vec2 point, Pallet* pallet)
 {
     if (point.x > pallet->position.x && point.x < pallet->position.x + PALLET_WIDTH && point.y > pallet->position.y && point.y < pallet->position.y + PALLET_HEIGHT) {
         return 1;
@@ -19,7 +19,7 @@ int PointRectCollision(Vec2 point, Pallet* pallet)
 }
 
 // Handles ball collision with a pallet
-void PalletCollision(Game* game, Pallet* pallet)
+static void PalletCollision(Game* game, Pallet* pallet)
 {
     Ball* ball = &game->ball;
 
@@ -62,7 +62,7 @@ void PalletCollision(Game* game, Pallet* pallet)
 
 // Returns a direction pointing to a random angle
 // according to whose turn it currently is
-Vec2 GetRandDirection(int turn)
+static Vec2 GetRandDirection(int turn)
 {
     Vec2 direction;
 
@@ -82,7 +82,7 @@ Vec2 GetRandDirection(int turn)
 }
 
 // Clears memory from the trail's list of positions
-void EmptyList(Ball* ball)
+static void EmptyList(Ball* ball)
 {
     if (ball->pastPositions != NULL) {
         PosList* current = ball->pastPositions;
@@ -116,7 +116,7 @@ void Ball_Reset(Game* game, int turn)
 
 // Handles ball collision with the boundaries
 // of the playing field
-void WallColision(Game* game)
+static void WallColision(Game* game)
 {
     Ball*   ball    = &game->ball;
     Pallet* palletA = &game->palletA;
@@ -151,7 +151,7 @@ void WallColision(Game* game)
 }
 
 // Returns a new node for a positions list
-PosList* NewPos(Vec2 position, PosList* next)
+static PosList* NewPos(Vec2 position, PosList* next)
 {
     PosList* new  = calloc(1, sizeof(PosList));
     new->position = position;
@@ -160,7 +160,7 @@ PosList* NewPos(Vec2 position, PosList* next)
 }
 
 // Add a position to the trail
-void AddPos(Ball* ball, Vec2 position)
+static void AddPos(Ball* ball, Vec2 position)
 {
     ball->listSize++;
 
@@ -210,7 +210,7 @@ void Ball_Update(Game* game)
 }
 
 // Recursively draws the trail
-void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* current, int index)
+static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* current, int index)
 {
     if (current == NULL)
         return;

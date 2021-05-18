@@ -76,7 +76,7 @@ void DrawFillRect(SDL_Renderer* renderer, const SDL_Color* color, Vec2 position,
     SDL_RenderFillRect(renderer, &rect);
 }
 
-void DrawPlayField(Game* game)
+static void DrawPlayField(Game* game)
 {
     SDL_Renderer* renderer = game->window->SDLRenderer;
 
@@ -103,7 +103,7 @@ void DrawPlayField(Game* game)
     SDL_RenderFillRect(renderer, &playField);
 }
 
-void DrawEnd(Game* game)
+static void DrawEnd(Game* game)
 {
     SDL_Renderer* renderer = game->window->SDLRenderer;
     Pallet*       a        = &game->palletA;

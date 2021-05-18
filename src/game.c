@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-void InitSDL()
+static void InitSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init: %s", SDL_GetError());
@@ -20,14 +20,14 @@ void InitSDL()
     }
 }
 
-void QuitSDL()
+static void QuitSDL()
 {
     TTF_Quit();
     SDL_Quit();
 }
 
 // Wrapper for TTF_OpenFont
-TTF_Font* LoadFont(const char* file, const int size)
+static TTF_Font* LoadFont(const char* file, const int size)
 {
     TTF_Font* font = TTF_OpenFont(file, size);
     if (!font) {
@@ -38,7 +38,7 @@ TTF_Font* LoadFont(const char* file, const int size)
 }
 
 // Loads all necessary resources into SDL
-void LoadResources(Game* game)
+static void LoadResources(Game* game)
 {
     game->numFonts = 2;
     game->font     = LoadFont("resources/font.ttf", 30);
@@ -46,7 +46,7 @@ void LoadResources(Game* game)
 
 // Resets the game parameters
 // allowing replay
-void Reset(Game* game)
+static void Reset(Game* game)
 {
     game->totalSets  = 5;
     game->currentSet = 1;
@@ -98,7 +98,7 @@ void Game_Quit(Game* game)
 
 // Updates game struct with FPS info
 // If targetFPS is >0 this will also limit it
-void CalculateFPS(Game* game, const unsigned int targetFPS)
+static void CalculateFPS(Game* game, const unsigned int targetFPS)
 {
     static Uint32 lastTime    = 0;
     Uint32        currentTime = SDL_GetTicks();
@@ -127,14 +127,14 @@ void CalculateFPS(Game* game, const unsigned int targetFPS)
 }
 
 // Deals with SDL events
-void ProcessInput(Game* game)
+static void ProcessInput(Game* game)
 {
     Input* input = game->input;
 
     game->isRunning = Input_Get(input);
 }
 
-void Update(Game* game)
+static void Update(Game* game)
 {
     Input* input = game->input;
 

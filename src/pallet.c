@@ -31,7 +31,7 @@ void Pallet_Init(Game* game)
 }
 
 // Keeps a pallet from going out of the playing field
-void LimitMovement(Game* game, Pallet* pallet)
+static void LimitMovement(Game* game, Pallet* pallet)
 {
     if (pallet->position.y < game->fieldTop)
         pallet->position.y = game->fieldTop;
@@ -40,14 +40,14 @@ void LimitMovement(Game* game, Pallet* pallet)
 }
 
 // Kinematics!
-void Move(Game* game, Pallet* pallet)
+static void Move(Game* game, Pallet* pallet)
 {
     Vec2 velocity    = Vector2(0.0f, pallet->speed * game->dt);
     pallet->position = Vector2_Add(pallet->position, velocity);
 }
 
 // Deals with input to the pallets
-void HandleInput(Game* game)
+static void HandleInput(Game* game)
 {
     Input*  input = game->input;
     Pallet* a     = &game->palletA;
