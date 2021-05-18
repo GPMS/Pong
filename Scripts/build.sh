@@ -20,4 +20,5 @@ cp -R "resources" $buildDir
 echo "Building in $buildType mode"
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=$buildType -B $buildDir
 cd $buildDir && make
+mv compile_commands.json ../../
 

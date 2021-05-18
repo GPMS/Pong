@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 project(Pong C)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(SDL2 REQUIRED)
 find_package(SDL2TTF REQUIRED)
