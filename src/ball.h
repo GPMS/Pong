@@ -23,7 +23,7 @@ typedef struct Ball {
 } Ball;
 
 // Resets ball parameters to default
-void Ball_Reset(struct Game* game, int turn);
+void Ball_Reset(Ball* ball, int turn);
 
 // Updates the ball position, checking for collision
 void Ball_Update(struct Game* game);

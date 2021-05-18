@@ -2,6 +2,7 @@
 #include "game.h"
 #include "render.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 const int   BALL_SIZE        = 10;      // "Ball" is a square, this is its size
 const float INITIAL_SPEED    = 100.0f;  // Initial speed of the ball
@@ -9,31 +10,28 @@ const float MAX_SPEED        = 500.0f;  // Max speed the ball can reach
 const int   INITIAL_MAX_SIZE = 30.0f;   // Initial max size of the trail
 int         MAX_SIZE;                   // Current max size of the trail
 
-// Returns 1 if colliding, 0 otherwise
-static int PointRectCollision(Vec2 point, Pallet* pallet)
+static bool IsBallColliding(Ball* ball, Pallet* pallet)
 {
-    if (point.x > pallet->position.x && point.x < pallet->position.x + PALLET_WIDTH && point.y > pallet->position.y && point.y < pallet->position.y + PALLET_HEIGHT) {
-        return 1;
-    }
-    return 0;
+    const int ballTop    = ball->position.y;
+    const int ballBottom = ball->position.y + BALL_SIZE;
+    const int ballLeft   = ball->position.x;
+    const int ballRight  = ball->position.x + BALL_SIZE;
+
+    const int palletTop    = pallet->position.y;
+    const int palletBottom = pallet->position.y + PALLET_HEIGHT;
+    const int palletLeft   = pallet->position.x;
+    const int palletRight  = pallet->position.x + PALLET_WIDTH;
+
+    return (ballLeft < palletRight
+            && ballRight > palletLeft
+            && ballTop < palletBottom
+            && ballBottom > palletTop);
 }
 
 // Handles ball collision with a pallet
-static void PalletCollision(Game* game, Pallet* pallet)
+static void PalletCollision(Ball* ball, Pallet* pallet)
 {
-    Ball* ball = &game->ball;
-
-    // No collision is possible if the ball is going
-    // in the direction the pallet is facing
-    if (Vector2_Dot(ball->direction, pallet->orientation) > 0)
-        return;
-
-    Vec2 ballTopLeft     = ball->position;
-    Vec2 ballTopRight    = Vector2_Add(ballTopLeft, Vector2(BALL_SIZE, 0.0f));
-    Vec2 ballBottomLeft  = Vector2_Add(ballTopLeft, Vector2(0.0f, BALL_SIZE));
-    Vec2 ballBottomRight = Vector2_Add(ballTopLeft, Vector2(BALL_SIZE, BALL_SIZE));
-
-    if (PointRectCollision(ballTopLeft, pallet) || PointRectCollision(ballTopRight, pallet) || PointRectCollision(ballBottomLeft, pallet) || PointRectCollision(ballBottomRight, pallet)) {
+    if (IsBallColliding(ball, pallet)) {
         // Adjust position
         if (pallet->orientation.x == 1.0f)
             ball->position.x = pallet->position.x + PALLET_WIDTH + 1;
@@ -96,14 +94,9 @@ static void EmptyList(Ball* ball)
     ball->listSize = 0;
 }
 
-void Ball_Reset(Game* game, int turn)
+void Ball_Reset(Ball* ball, int turn)
 {
-    Ball* ball = &game->ball;
-
-    if (game->currentSet > game->totalSets)
-        game->state = END;
-
-    ball->position = game->fieldMiddle;
+    ball->position = FIELD_MIDDLE;
 
     EmptyList(ball);
 
@@ -123,30 +116,41 @@ static void WallColision(Game* game)
     Pallet* palletB = &game->palletB;
 
     // Boundaries of the ball
+
     int ballTop    = ball->position.y;
     int ballBottom = ball->position.y + BALL_SIZE;
     int ballRight  = ball->position.x + BALL_SIZE;
     int ballLeft   = ball->position.x;
 
     // Up/Down collision, reflect...
-    if (ballTop < game->fieldTop) {
-        ball->position.y = game->fieldTop;
+
+    if (ballTop < FIELD_TOP) {
+        ball->position.y = FIELD_TOP;
         ball->direction.y *= -1.0f;
     }
-    if (ballBottom > game->fieldBottom) {
-        ball->position.y = game->fieldBottom - BALL_SIZE;
+    if (ballBottom > FIELD_BOTTOM) {
+        ball->position.y = FIELD_BOTTOM - BALL_SIZE;
         ball->direction.y *= -1.0f;
     }
 
     // Was a point scored?
-    if (ballRight > game->fieldRight) {
+
+    bool hasScored = false;
+
+    if (ballRight > FIELD_RIGHT) {
         palletB->score++;
-        game->currentSet++;
-        Ball_Reset(game, game->currentSet % 2);
-    } else if (ballLeft < game->fieldLeft) {
+        hasScored = true;
+    } else if (ballLeft < FIELD_LEFT) {
         palletA->score++;
+        hasScored = true;
+    }
+
+    if (hasScored) {
         game->currentSet++;
-        Ball_Reset(game, game->currentSet % 2);
+        if (game->currentSet > game->totalSets)
+            game->state = END;
+        else
+            Ball_Reset(ball, game->currentSet % 2);
     }
 }
 
@@ -205,8 +209,8 @@ void Ball_Update(Game* game)
 
     // Handle collision
     WallColision(game);
-    PalletCollision(game, palletA);
-    PalletCollision(game, palletB);
+    PalletCollision(ball, palletA);
+    PalletCollision(ball, palletB);
 }
 
 // Recursively draws the trail

@@ -7,72 +7,55 @@
 const int PALLET_WIDTH  = 5;
 const int PALLET_HEIGHT = 60;
 
-void Pallet_Init(Game* game)
+void Pallet_Init(Pallet*      pallet,
+                 Vec2         position,
+                 Vec2         orientation,
+                 SDL_Scancode moveUpKey,
+                 SDL_Scancode moveDownKey)
 {
-    // Distance from the borders of the
-    // playing field
-    int palletDistance = 50;
-
-    Pallet* a = &game->palletA;
-    Pallet* b = &game->palletB;
-
-    a->position.x = game->fieldRight - palletDistance - PALLET_WIDTH;
-    b->position.x = game->fieldLeft + palletDistance;
-
-    a->position.y = game->fieldMiddle.y - PALLET_HEIGHT / 2.0f;
-    b->position.y = a->position.y;
-
-    a->orientation = Vector2(-1.0f, 0.0f);
-    b->orientation = Vector2(1.0f, 0.0f);
-
-    a->speed = b->speed = 0.0f;
-
-    a->score = b->score = 0;
+    pallet->position    = position;
+    pallet->orientation = orientation;
+    pallet->moveUpKey   = moveUpKey;
+    pallet->moveDownKey = moveDownKey;
+    pallet->speed       = 0.0f;
+    pallet->score       = 0;
 }
 
 // Keeps a pallet from going out of the playing field
-static void LimitMovement(Game* game, Pallet* pallet)
+static void LimitMovement(Pallet* pallet, int maxY, int minY)
 {
-    if (pallet->position.y < game->fieldTop)
-        pallet->position.y = game->fieldTop;
-    if (pallet->position.y + PALLET_HEIGHT > game->fieldBottom)
-        pallet->position.y = game->fieldBottom - PALLET_HEIGHT;
+    if (pallet->position.y < maxY)
+        pallet->position.y = maxY;
+    if (pallet->position.y + PALLET_HEIGHT > minY)
+        pallet->position.y = minY - PALLET_HEIGHT;
 }
 
 // Kinematics!
-static void Move(Game* game, Pallet* pallet)
+static void Move(Pallet* pallet, float dt)
 {
-    Vec2 velocity    = Vector2(0.0f, pallet->speed * game->dt);
+    Vec2 velocity    = Vector2(0.0f, pallet->speed * dt);
     pallet->position = Vector2_Add(pallet->position, velocity);
 }
 
 // Deals with input of a pallet
-static void HandleInput(Pallet* pallet, SDL_Scancode moveUpKey, SDL_Scancode moveDownKey)
+static void HandleInput(Pallet* pallet)
 {
     const float PALLET_SPEED = 400.0f;
 
-    if (IsKeyDown(moveUpKey)) {
+    if (IsKeyDown(pallet->moveUpKey)) {
         pallet->speed = -PALLET_SPEED;
-    } else if (IsKeyDown(moveDownKey)) {
+    } else if (IsKeyDown(pallet->moveDownKey)) {
         pallet->speed = PALLET_SPEED;
-    } else if (IsKeyReleased(moveUpKey) || IsKeyReleased(moveDownKey)) {
+    } else if (IsKeyReleased(pallet->moveUpKey) || IsKeyReleased(pallet->moveDownKey)) {
         pallet->speed = 0;
     }
 }
 
-void Pallet_Update(Game* game)
+void Pallet_Update(Pallet* pallet, float dt)
 {
-    Pallet* a = &game->palletA;
-    Pallet* b = &game->palletB;
-
-    HandleInput(a, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN);
-    HandleInput(b, SDL_SCANCODE_A, SDL_SCANCODE_Z);
-
-    Move(game, a);
-    Move(game, b);
-
-    LimitMovement(game, a);
-    LimitMovement(game, b);
+    HandleInput(pallet);
+    Move(pallet, dt);
+    LimitMovement(pallet, FIELD_TOP, FIELD_BOTTOM);
 }
 
 void Pallet_Draw(SDL_Renderer* renderer, Pallet* pallet)

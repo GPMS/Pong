@@ -85,20 +85,20 @@ static void DrawPlayField(Game* game)
     char tmpString[30];
 
     sprintf(tmpString, "%d", game->palletB.score);
-    DrawText(game, &white, Vector2(game->fieldLeft, 0.0f), tmpString, game->font);
+    DrawText(game, &white, Vector2(FIELD_LEFT, 0.0f), tmpString, game->font);
 
     sprintf(tmpString, "%d", game->palletA.score);
-    DrawText(game, &white, Vector2(game->fieldRight - 40, 0.0f), tmpString, game->font);
+    DrawText(game, &white, Vector2(FIELD_RIGHT - 40, 0.0f), tmpString, game->font);
 
     sprintf(tmpString, "%d/%d", game->currentSet, game->totalSets);
     DrawText(game, &white, Vector2(CENTERED, 0.0f), tmpString, game->font);
 
     Render_SetDrawColor(renderer, &grey);
     SDL_Rect playField;
-    playField.x = game->fieldLeft;
-    playField.y = game->fieldTop;
-    playField.w = game->fieldRight - game->fieldLeft;
-    playField.h = game->fieldBottom - game->fieldTop;
+    playField.x = FIELD_LEFT;
+    playField.y = FIELD_TOP;
+    playField.w = FIELD_RIGHT - FIELD_LEFT;
+    playField.h = FIELD_BOTTOM - FIELD_TOP;
     SDL_RenderFillRect(renderer, &playField);
 }
 

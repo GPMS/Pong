@@ -7,6 +7,12 @@
 #include <stdlib.h>
 #include <time.h>
 
+int  FIELD_TOP;
+int  FIELD_BOTTOM;
+int  FIELD_RIGHT;
+int  FIELD_LEFT;
+Vec2 FIELD_MIDDLE;
+
 static void InitSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -51,9 +57,20 @@ static void Reset(Game* game)
     game->totalSets  = 5;
     game->currentSet = 1;
 
-    Pallet_Init(game);
+    Pallet_Init(&game->palletA,
+                Vector2(FIELD_RIGHT - 50 - PALLET_WIDTH, FIELD_MIDDLE.y - PALLET_HEIGHT / 2.0f),
+                Vector2(-1.0f, 0.0f),
+                SDL_SCANCODE_UP,
+                SDL_SCANCODE_DOWN);
+
+    Pallet_Init(&game->palletB,
+                Vector2(FIELD_LEFT + 50, FIELD_MIDDLE.y - PALLET_HEIGHT / 2.0f),
+                Vector2(1.0f, 0.0f),
+                SDL_SCANCODE_A,
+                SDL_SCANCODE_Z);
+
     game->ball.pastPositions = NULL;
-    Ball_Reset(game, 1);
+    Ball_Reset(&game->ball, 1);
 
     game->state = GAME;
 }
@@ -69,13 +86,13 @@ void Game_Init(Game* game)
 
     game->window = Window_Create("Engine", 720, 480, 0);
 
-    game->fieldTop    = 50;
-    game->fieldBottom = game->window->height - 50;
-    game->fieldLeft   = 20;
-    game->fieldRight  = game->window->width - 20;
+    FIELD_TOP    = 50;
+    FIELD_BOTTOM = game->window->height - 50;
+    FIELD_LEFT   = 20;
+    FIELD_RIGHT  = game->window->width - 20;
 
-    game->fieldMiddle.x = game->fieldLeft + (game->fieldRight - game->fieldLeft) / 2.0f;
-    game->fieldMiddle.y = game->fieldTop + (game->fieldBottom - game->fieldTop) / 2.0f;
+    FIELD_MIDDLE.x = FIELD_LEFT + (FIELD_RIGHT - FIELD_LEFT) / 2.0f;
+    FIELD_MIDDLE.y = FIELD_TOP + (FIELD_BOTTOM - FIELD_TOP) / 2.0f;
 
     Reset(game);
 
@@ -131,7 +148,8 @@ static void Update(Game* game)
 
     switch (game->state) {
         case GAME:
-            Pallet_Update(game);
+            Pallet_Update(&game->palletA, game->dt);
+            Pallet_Update(&game->palletB, game->dt);
             Ball_Update(game);
             break;
         case END:

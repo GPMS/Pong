@@ -9,17 +9,20 @@ extern const int PALLET_HEIGHT;
 struct Game;
 
 typedef struct Pallet {
-    Vec2  position;
-    Vec2  orientation;  // Direction the pallet is facing
-    float speed;
-    int   score;
+    Vec2         position;
+    Vec2         orientation;  // Direction the pallet is facing
+    SDL_Scancode moveUpKey;
+    SDL_Scancode moveDownKey;
+    float        speed;
+    int          score;
 } Pallet;
 
-// Inits both pallets with default values
-void Pallet_Init(struct Game* game);
+void Pallet_Init(Pallet*      pallet,
+                 Vec2         position,
+                 Vec2         orientation,
+                 SDL_Scancode moveUpKey,
+                 SDL_Scancode moveDownKey);
 
-// Updates the position of both pallets
-void Pallet_Update(struct Game* game);
+void Pallet_Update(Pallet* pallet, float dt);
 
-// Draws one pallet
 void Pallet_Draw(SDL_Renderer* renderer, Pallet* pallet);

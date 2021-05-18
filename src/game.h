@@ -14,6 +14,12 @@ enum GameState {
     END
 };
 
+extern int  FIELD_TOP;
+extern int  FIELD_BOTTOM;
+extern int  FIELD_RIGHT;
+extern int  FIELD_LEFT;
+extern Vec2 FIELD_MIDDLE;
+
 // Contains data necessary to run the game
 typedef struct Game {
     struct Window* window;
@@ -27,13 +33,6 @@ typedef struct Game {
     // Font files
     TTF_Font* font;
     int       numFonts;
-
-    // Boundaries of the playing field
-    int  fieldTop;
-    int  fieldBottom;
-    int  fieldRight;
-    int  fieldLeft;
-    Vec2 fieldMiddle;  // Middle point of the playing field
 
     // Sets
     int totalSets;
