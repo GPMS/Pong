@@ -3,9 +3,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-enum WindowFlags { FULLSCREEN = 0x1,
-                   INVISIBLE  = 0x2,
-                   BORDERLESS = 0x4 };
+enum WindowFlags {
+    FULLSCREEN = 0x1,
+    INVISIBLE  = 0x2,
+    BORDERLESS = 0x4
+};
 
 typedef struct Window {
     SDL_Window*   SDLWindow;

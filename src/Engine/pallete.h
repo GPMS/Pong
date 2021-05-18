@@ -2,7 +2,6 @@
 
 #include <SDL2/SDL.h>
 
-//                          R    G    B    A
 static const SDL_Color white = {255, 255, 255, 255};
 static const SDL_Color grey  = {50, 50, 50, 255};
 static const SDL_Color black = {0, 0, 0, 255};

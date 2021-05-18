@@ -9,8 +9,10 @@
 struct Window;
 struct Input;
 
-enum GameState { GAME,
-                 END };
+enum GameState {
+    GAME,
+    END
+};
 
 // Contains data necessary to run the game
 typedef struct Game {
