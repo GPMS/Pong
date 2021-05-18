@@ -46,31 +46,17 @@ static void Move(Game* game, Pallet* pallet)
     pallet->position = Vector2_Add(pallet->position, velocity);
 }
 
-// Deals with input to the pallets
-static void HandleInput(Game* game)
+// Deals with input of a pallet
+static void HandleInput(Pallet* pallet, SDL_Scancode moveUpKey, SDL_Scancode moveDownKey)
 {
-    Input*  input = game->input;
-    Pallet* a     = &game->palletA;
-    Pallet* b     = &game->palletB;
-
     const float PALLET_SPEED = 400.0f;
 
-    if (Input_KeyWasPressed(input, SDLK_UP) || Input_KeyIsBeingHeld(input, SDLK_UP)) {
-        a->speed = -PALLET_SPEED;
-    } else if (Input_KeyWasPressed(input, SDLK_DOWN) || Input_KeyIsBeingHeld(input, SDLK_DOWN)) {
-        a->speed = PALLET_SPEED;
-    }
-    if (Input_KeyWasReleased(input, SDLK_UP) || Input_KeyWasReleased(input, SDLK_DOWN)) {
-        a->speed = 0;
-    }
-
-    if (Input_KeyWasPressed(input, SDLK_a) || Input_KeyIsBeingHeld(input, SDLK_a)) {
-        b->speed = -PALLET_SPEED;
-    } else if (Input_KeyWasPressed(input, SDLK_z) || Input_KeyIsBeingHeld(input, SDLK_z)) {
-        b->speed = PALLET_SPEED;
-    }
-    if (Input_KeyWasReleased(input, SDLK_a) || Input_KeyWasReleased(input, SDLK_z)) {
-        b->speed = 0;
+    if (IsKeyDown(moveUpKey)) {
+        pallet->speed = -PALLET_SPEED;
+    } else if (IsKeyDown(moveDownKey)) {
+        pallet->speed = PALLET_SPEED;
+    } else if (IsKeyReleased(moveUpKey) || IsKeyReleased(moveDownKey)) {
+        pallet->speed = 0;
     }
 }
 
@@ -79,7 +65,8 @@ void Pallet_Update(Game* game)
     Pallet* a = &game->palletA;
     Pallet* b = &game->palletB;
 
-    HandleInput(game);
+    HandleInput(a, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN);
+    HandleInput(b, SDL_SCANCODE_A, SDL_SCANCODE_Z);
 
     Move(game, a);
     Move(game, b);

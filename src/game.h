@@ -24,9 +24,6 @@ typedef struct Game {
     float          dt;
     enum GameState state;
 
-    // Subsystems
-    struct Input* input;
-
     // Font files
     TTF_Font* font;
     int       numFonts;

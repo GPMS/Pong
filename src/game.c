@@ -69,8 +69,6 @@ void Game_Init(Game* game)
 
     game->window = Window_Create("Engine", 720, 480, 0);
 
-    game->input = Input_Create();
-
     game->fieldTop    = 50;
     game->fieldBottom = game->window->height - 50;
     game->fieldLeft   = 20;
@@ -86,8 +84,6 @@ void Game_Init(Game* game)
 
 void Game_Quit(Game* game)
 {
-    Input_Destroy(game->input);
-
     TTF_CloseFont(game->font);
     TTF_Quit();
 
@@ -126,19 +122,11 @@ static void CalculateFPS(Game* game, const unsigned int targetFPS)
     game->fps = fps;
 }
 
-// Deals with SDL events
-static void ProcessInput(Game* game)
-{
-    Input* input = game->input;
-
-    game->isRunning = Input_Get(input);
-}
-
 static void Update(Game* game)
 {
-    Input* input = game->input;
+    game->isRunning = Input_Poll();
 
-    if (Input_KeyWasReleased(input, SDLK_ESCAPE))
+    if (IsKeyReleased(SDL_SCANCODE_ESCAPE))
         game->isRunning = SDL_FALSE;
 
     switch (game->state) {
@@ -147,9 +135,9 @@ static void Update(Game* game)
             Ball_Update(game);
             break;
         case END:
-            if (Input_KeyWasReleased(input, SDLK_y))
+            if (IsKeyReleased(SDL_SCANCODE_Y))
                 Reset(game);
-            else if (Input_KeyWasReleased(input, SDLK_n))
+            else if (IsKeyReleased(SDL_SCANCODE_N))
                 game->isRunning = SDL_FALSE;
             break;
     }
@@ -159,8 +147,6 @@ void Game_Loop(Game* game)
 {
     while (game->isRunning) {
         CalculateFPS(game, 60);
-
-        ProcessInput(game);
         Update(game);
         Render(game);
     }
