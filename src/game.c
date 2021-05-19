@@ -69,7 +69,8 @@ static void Reset(Game* game)
                 SDL_SCANCODE_A,
                 SDL_SCANCODE_Z);
 
-    game->ball.pastPositions = NULL;
+    game->ball.trail     = NULL;
+    game->ball.trailLast = NULL;
     Ball_Reset(&game->ball, 1);
 
     game->state = GAME;

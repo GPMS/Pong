@@ -10,13 +10,16 @@ struct Game;
 typedef struct PosList {
     Vec2            position;
     struct PosList* next;
+    struct PosList* prev;
 } PosList;
 
 typedef struct Ball {
     Vec2 position;
 
-    PosList* pastPositions;
-    int      listSize;
+    PosList* trail;
+    PosList* trailLast;
+    int      trailSize;
+    int      trailCapacity;
 
     Vec2  direction;
     float speed;

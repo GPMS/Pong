@@ -8,7 +8,6 @@ const int   BALL_SIZE        = 10;      // "Ball" is a square, this is its size
 const float INITIAL_SPEED    = 100.0f;  // Initial speed of the ball
 const float MAX_SPEED        = 500.0f;  // Max speed the ball can reach
 const int   INITIAL_MAX_SIZE = 30.0f;   // Initial max size of the trail
-int         MAX_SIZE;                   // Current max size of the trail
 
 static bool IsBallColliding(Ball* ball, Pallet* pallet)
 {
@@ -54,7 +53,7 @@ static void PalletCollision(Ball* ball, Pallet* pallet)
             ball->speed = MAX_SPEED;
 
         // Change size of trail based on speed
-        MAX_SIZE = Lerp(INITIAL_MAX_SIZE, 100, (ball->speed - INITIAL_SPEED) / (float)MAX_SPEED);
+        ball->trailCapacity = Lerp(INITIAL_MAX_SIZE, 100, (ball->speed - INITIAL_SPEED) / (float)MAX_SPEED);
     }
 }
 
@@ -82,29 +81,26 @@ static Vec2 GetRandDirection(int turn)
 // Clears memory from the trail's list of positions
 static void EmptyList(Ball* ball)
 {
-    if (ball->pastPositions != NULL) {
-        PosList* current = ball->pastPositions;
+    if (ball->trail != NULL) {
+        PosList* current = ball->trail;
         while (current != NULL) {
             PosList* next = current->next;
             free(current);
             current = next;
         }
-        ball->pastPositions = NULL;
+        ball->trail     = NULL;
+        ball->trailLast = NULL;
     }
-    ball->listSize = 0;
+    ball->trailSize     = 0;
+    ball->trailCapacity = INITIAL_MAX_SIZE;
 }
 
 void Ball_Reset(Ball* ball, int turn)
 {
-    ball->position = FIELD_MIDDLE;
-
-    EmptyList(ball);
-
-    ball->speed = INITIAL_SPEED;
-
+    ball->position  = FIELD_MIDDLE;
+    ball->speed     = INITIAL_SPEED;
     ball->direction = GetRandDirection(turn);
-
-    MAX_SIZE = INITIAL_MAX_SIZE;
+    EmptyList(ball);
 }
 
 // Handles ball collision with the boundaries
@@ -160,37 +156,36 @@ static PosList* NewPos(Vec2 position, PosList* next)
     PosList* new  = calloc(1, sizeof(PosList));
     new->position = position;
     new->next     = next;
+    new->prev     = NULL;
+
+    if (next) {
+        next->prev = new;
+    }
+
     return new;
 }
 
 // Add a position to the trail
 static void AddPos(Ball* ball, Vec2 position)
 {
-    ball->listSize++;
+    ball->trailSize++;
 
-    PosList* new   = NULL;
-    PosList* first = ball->pastPositions;
+    PosList* new = NewPos(position, ball->trail);
+    ball->trail  = new;
 
-    // Empty list?
-    if (ball->pastPositions == NULL) {
-        new                 = NewPos(position, first);
-        ball->pastPositions = new;
+    if (!new->next) {
+        ball->trailLast = new;
         return;
     }
 
-    new                 = NewPos(position, first);
-    ball->pastPositions = new;
-
     // Max size exceeded? delete oldest node
-    if (ball->listSize > MAX_SIZE) {
-        PosList* current = new->next;
-        PosList* prev;
-        while (current->next != NULL) {
-            prev    = current;
-            current = current->next;
-        }
-        free(current);
-        prev->next = NULL;
+    if (ball->trailSize > ball->trailCapacity) {
+        PosList* deleteMe = ball->trailLast;
+        ball->trailLast   = ball->trailLast->prev;
+        free(deleteMe);
+
+        ball->trailLast->next = NULL;
+        ball->trailSize--;
     }
 }
 
@@ -214,7 +209,7 @@ void Ball_Update(Game* game)
 }
 
 // Recursively draws the trail
-static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* current, int index)
+static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* current, int index, int capacity)
 {
     if (current == NULL)
         return;
@@ -222,16 +217,16 @@ static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* c
     // color gets more and more transparent
     // as the trail goes
     SDL_Color newColor = *color;
-    newColor.a -= Lerp(200.0f, 250.0f, index / (float)MAX_SIZE);
+    newColor.a -= Lerp(200.0f, 250.0f, index / (float)capacity);
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     DrawFillRect(renderer, &newColor, current->position, BALL_SIZE, BALL_SIZE);
 
-    DrawTrail(renderer, color, current->next, ++index);
+    DrawTrail(renderer, color, current->next, ++index, capacity);
 }
 
 void Ball_Draw(SDL_Renderer* renderer, Ball* ball)
 {
     DrawFillRect(renderer, &white, ball->position, BALL_SIZE, BALL_SIZE);
-    DrawTrail(renderer, &white, ball->pastPositions, 0);
+    DrawTrail(renderer, &white, ball->trail, 0, ball->trailCapacity);
 }
