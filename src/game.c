@@ -102,6 +102,8 @@ void Game_Init(Game* game)
 
 void Game_Quit(Game* game)
 {
+    Ball_Reset(&game->ball, 0);
+
     TTF_CloseFont(game->font);
     TTF_Quit();
 
