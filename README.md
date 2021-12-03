@@ -22,4 +22,4 @@ $ ./run.sh
 
 - **ESC**: quit
 - **Up**/**Down**: right pallet movement
-- **A**/**Z**: left pallet movement
+- **a**/**z**: left pallet movement
