@@ -208,25 +208,26 @@ void Ball_Update(Game* game)
     PalletCollision(ball, palletB);
 }
 
-// Recursively draws the trail
-static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, PosList* current, int index, int capacity)
+static void DrawTrail(SDL_Renderer* renderer, const SDL_Color* color, Ball* ball)
 {
-    if (current == NULL)
-        return;
-
-    // color gets more and more transparent
-    // as the trail goes
-    SDL_Color newColor = *color;
-    newColor.a -= Lerp(200.0f, 250.0f, index / (float)capacity);
-
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    DrawFillRect(renderer, &newColor, current->position, BALL_SIZE, BALL_SIZE);
 
-    DrawTrail(renderer, color, current->next, ++index, capacity);
+    PosList* current = ball->trail;
+    for (int index = 0; current; ++index) {
+        // color gets more and more transparent as the trail goes
+        SDL_Color newColor = *color;
+        newColor.a -= Lerp(200.0f, 250.0f, index / (float)ball->trailCapacity);
+
+        DrawFillRect(renderer, &newColor, current->position, BALL_SIZE, BALL_SIZE);
+
+        current = current->next;
+    }
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
 void Ball_Draw(SDL_Renderer* renderer, Ball* ball)
 {
     DrawFillRect(renderer, &white, ball->position, BALL_SIZE, BALL_SIZE);
-    DrawTrail(renderer, &white, ball->trail, 0, ball->trailCapacity);
+    DrawTrail(renderer, &white, ball);
 }
