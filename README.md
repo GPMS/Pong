@@ -21,4 +21,5 @@ $ ./run.sh
 ## Controls
 
 - **ESC**: quit
-- **Arrow keys**: movement
+- **Up**/**Down**: right pallet movement
+- **A**/**Z**: left pallet movement
