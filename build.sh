@@ -1,6 +1,6 @@
 #!/bin/sh
 
-buildType=`cat buildType.txt`
+buildType=`cat config.txt`
 buildDir=""
 
 case "$buildType"  in
