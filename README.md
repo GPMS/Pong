@@ -2,6 +2,8 @@
 
 A Pong game in C using SDL2.
 
+![game screenshot](screenshots/game.png)
+
 ## Requirements
 
 Arch Linux:
