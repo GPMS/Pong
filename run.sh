@@ -1,6 +1,6 @@
 #!/bin/sh
 
-buildType=`cat Scripts/buildType.txt`
+buildType=`cat buildType.txt`
 runDirectory=""
 
 case "$buildType" in
@@ -15,6 +15,6 @@ case "$buildType" in
         exit 1
 esac
 
-cp -r "resources" $runDirectory
 echo "Running in $buildType mode"
-cd $runDirectory && ./Pong
+./$runDirectory/Pong
+

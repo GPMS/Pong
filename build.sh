@@ -1,6 +1,6 @@
 #!/bin/sh
 
-buildType=`cat Scripts/buildType.txt`
+buildType=`cat buildType.txt`
 buildDir=""
 
 case "$buildType"  in
@@ -16,7 +16,6 @@ case "$buildType"  in
 esac
 
 mkdir -p $buildDir
-cp -R "resources" $buildDir
 echo "Building in $buildType mode"
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=$buildType -B $buildDir
 cd $buildDir && make
