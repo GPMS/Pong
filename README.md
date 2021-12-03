@@ -15,7 +15,7 @@ Arch Linux:
 
 ## Compiling and Running
 ```console
-$ echo Release > scripts/config.txt
+$ echo Release > config.txt
 $ ./build.sh
 $ ./run.sh
 ```
